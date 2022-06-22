@@ -1,0 +1,6 @@
+{
+    "env": {
+        "MONGO_ATLAS_PW": "gCbIn7ERoofgCi4c",
+        "JWT_KEY": "Allah_is_my_savior_only!"
+    }
+}

@@ -5,14 +5,28 @@ import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { Post } from './post.model';
 import { environment } from "../../environments/environment";
+import { PostSocketService } from './post-socket.service';
+import { AuthService } from '../auth/auth.service';
 
 const BACKEND_URL = environment.apiUrl + '/posts/'
 
 @Injectable({providedIn: 'root'})
 export class PostsService {
+
+    isLoading=false;
     private posts: Post[] = [];
     private postsUpdated = new Subject<{posts: Post[], postCount: number}>();
-    constructor(private http: HttpClient, private router: Router) {}
+
+    constructor(
+        private http: HttpClient, 
+        private router: Router,
+        // private postSocketService: PostSocketService,
+        // private authService: AuthService,
+        
+        ) {
+
+        }
+
 
     getPosts(postsPerPage: number, currentPage: number) {
         const queryParams = `?pagesize=${postsPerPage}&page=${currentPage}`;
@@ -62,6 +76,7 @@ export class PostsService {
             )
         .subscribe(responseData => {
             this.router.navigate(["/"])
+            // this.postSocketService.emitCreatePostSocket(postData);
         })
     }
 
@@ -86,11 +101,39 @@ export class PostsService {
         this.http.put(BACKEND_URL + id, postData)
         .subscribe(response => {
             this.router.navigate(["/"]);
+            // this.postSocketService.emitUpdatePostSocket(postData)
         })
     }
 
     deletePost(postId: string) {
-       return this.http.delete(BACKEND_URL + postId)
+
+        return this.http.delete(BACKEND_URL + postId)
 
     }
+
+    // private observePostSocket() {
+    //     this.postSocketService.receiveCreatePostSocket()
+    //     .subscribe((post: any) => {
+    //       console.log(`Create ${post.id} Post socket received`);
+    //       this.refreshPosts(post);
+    //     });
+       
+    //     this.postSocketService.receiveUpdatePostSocket()
+    //     .subscribe((post: any) => {
+    //       console.log(`Update ${post.id} Post socket received`);
+    //       this.refreshPosts(post);
+    //     });
+       
+    //     this.postSocketService.receiveDeletePostSocket()
+    //     .subscribe((post: any) => {
+    //       console.log(`Delete ${post.id} Post socket received`);
+    //       this.refreshPosts(post);
+    //     });
+    //   }
+       
+    //   private refreshPosts(post: any) {
+    //     if (post.creator != this.authService.getUserId()) {
+    //       this.getPosts(...);
+    //     }
+    //   }
 }
